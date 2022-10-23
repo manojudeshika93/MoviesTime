@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, FlatList} from 'react-native';
 
-import {styles} from './MoviesScreen.style';
+import {styles} from './MoviesTemplate.style';
 import {Text} from '../../atoms';
 import {MovieCard} from '../../organisms';
 import {colors} from '../../../constants/colors';
@@ -27,7 +27,7 @@ const DUMMY_DATA = [
   },
 ];
 
-export const MoviesScreen = () => {
+export const MoviesTemplate = () => {
   const renderCard = ({item, index}) => {
     return <MovieCard item={item} index={index} />;
   };
