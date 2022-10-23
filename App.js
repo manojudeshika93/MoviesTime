@@ -1,24 +1,14 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, Text} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
+
+import AppStack from './src/navigators/AppStack';
 
 const App = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.highlight}>MoviesApp</Text>
-    </SafeAreaView>
+    <NavigationContainer>
+      <AppStack />
+    </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  highlight: {
-    fontWeight: '400',
-    color: '#000000',
-  },
-});
 
 export default App;
