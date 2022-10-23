@@ -1,33 +1,39 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, FlatList} from 'react-native';
+import _ from 'lodash';
 
 import {styles} from './MoviesScreen.style';
-import {Text} from '../../atoms';
+import {Text, Loader} from '../../atoms';
 import {MovieCard} from '../../organisms';
 import {colors} from '../../../constants/colors';
-
-const DUMMY_DATA = [
-  {
-    poster_path:
-      'https://www.themoviedb.org/t/p/w1280/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg',
-    adult: false,
-    overview:
-      'Framed in the 1940s for the double murder of his wife and her lover, upstanding banker Andy Dufresne begins a new life at the Shawshank prison, where he puts his accounting skills to work for an amoral warden. During his long stretch in prison, Dufresne comes to be admired by the other inmates -- including an older prisoner named Red -- for his integrity and unquenchable sense of hope.',
-    release_date: '1994-09-10',
-    genre_ids: [18, 80],
-    id: 278,
-    original_title: 'The Shawshank Redemption',
-    original_language: 'en',
-    title: 'The Shawshank Redemption',
-    backdrop_path: '/xBKGJQsAIeweesB79KC89FpBrVr.jpg',
-    popularity: 6.741296,
-    vote_count: 5238,
-    video: false,
-    vote_average: 8.32,
-  },
-];
+import {makeToast} from '../../../utils/helpers';
+import {useRatedMovies} from '../../../query/movies';
 
 export const MoviesScreen = () => {
+  const [moviesData, setMoviesData] = useState([]);
+
+  const dataRetrieveSuccess = data => {
+    let movies = [];
+    if (!_.isEmpty(data?.pages[0]) && data) {
+      data?.pages.map(page => {
+        page.data.map(item => movies.push(item));
+      });
+    }
+    setMoviesData(movies);
+  };
+
+  const dataRetrieveError = () => {
+    makeToast('warning', 'Failed to retrieve data');
+  };
+
+  const {
+    isLoading: isLoadingData,
+    fetchNextPage: dataFetchNexPage,
+    isFetchingNextPage: isDataFetchingNextPage,
+    hasNextPage: dataHasNextPage,
+    refetch: dataRefetch,
+  } = useRatedMovies(dataRetrieveSuccess, dataRetrieveError);
+
   const renderCard = ({item, index}) => {
     return <MovieCard item={item} index={index} />;
   };
@@ -45,8 +51,12 @@ export const MoviesScreen = () => {
       </View>
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={DUMMY_DATA}
+        data={moviesData}
         renderItem={renderCard}
+        onRefresh={() => {
+          dataRefetch();
+        }}
+        refreshing={isLoadingData}
         keyExtractor={item => `${item.id}`}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
@@ -59,6 +69,9 @@ export const MoviesScreen = () => {
             </Text>
           </View>
         }
+        ListFooterComponent={isDataFetchingNextPage && <Loader />}
+        onEndReached={() => dataHasNextPage && dataFetchNexPage()}
+        onEndReachedThreshold={0.6}
       />
     </View>
   );
