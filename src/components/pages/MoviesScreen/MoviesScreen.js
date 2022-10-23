@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, FlatList} from 'react-native';
 import _ from 'lodash';
 
@@ -15,9 +15,7 @@ export const MoviesScreen = () => {
   const dataRetrieveSuccess = data => {
     let movies = [];
     if (!_.isEmpty(data?.pages[0]) && data) {
-      data?.pages.map(page => {
-        page.data.map(item => movies.push(item));
-      });
+      data?.pages[0].results.map(page => movies.push(page));
     }
     setMoviesData(movies);
   };
@@ -33,6 +31,11 @@ export const MoviesScreen = () => {
     hasNextPage: dataHasNextPage,
     refetch: dataRefetch,
   } = useRatedMovies(dataRetrieveSuccess, dataRetrieveError);
+
+  useEffect(() => {
+    dataRefetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const renderCard = ({item, index}) => {
     return <MovieCard item={item} index={index} />;

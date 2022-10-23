@@ -1,6 +1,7 @@
 import React from 'react';
 import {View} from 'react-native';
 import PropTypes from 'prop-types';
+import {BASE_URL} from '@env';
 
 import {styles} from './MovieCard.style';
 import {Text, Card} from '../../atoms';
@@ -15,7 +16,7 @@ export const MovieCard = ({item, index}) => {
           <MovieProgressCard
             value={Math.round(item.popularity * 10)}
             source={{
-              uri: item.poster_path,
+              uri: BASE_URL + item.poster_path,
             }}
           />
           <View style={styles.textContainer}>
