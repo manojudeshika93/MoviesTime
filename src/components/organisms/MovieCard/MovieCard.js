@@ -1,7 +1,6 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, Linking} from 'react-native';
 import PropTypes from 'prop-types';
-import {BASE_URL} from '@env';
 
 import {styles} from './MovieCard.style';
 import {Text, Card} from '../../atoms';
@@ -11,12 +10,17 @@ import {colors} from '../../../constants/colors';
 export const MovieCard = ({item, index}) => {
   return (
     <View style={styles.container}>
-      <Card>
+      <Card
+        onClick={() =>
+          Linking.openURL(
+            `https://www.youtube.com/results?search_query=${item.title}`,
+          )
+        }>
         <View style={styles.cardContainer}>
           <MovieProgressCard
-            value={Math.round(item.popularity * 10)}
+            value={Math.round(item.vote_average * 10)} // popularity attribute is not suitable as the response, so i used vote_average
             source={{
-              uri: BASE_URL + item.poster_path,
+              uri: 'https://www.themoviedb.org/t/p/w1280' + item.poster_path,
             }}
           />
           <View style={styles.textContainer}>
